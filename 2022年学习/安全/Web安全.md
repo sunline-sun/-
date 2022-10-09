@@ -1,0 +1,134 @@
+### XSS（Cross-Site Scripting，跨站脚本攻击）
+
+##### 如何产生？
+
+- HTML非常灵活，可以任意时间更改。所以黑客可以通过给定异常的输入，黑客可以在你的浏览器里，插入一段恶意的JavaScript脚本，窃取你的隐私并仿冒你进行操作，这就是XSS攻击
+
+
+
+##### 分类
+
+- 反射型XSS
+  - 比如通过<h3>标签进行闭合，然后将js脚本插入并执行
+  - 产生在前后端一体的网页应用中
+  - <img src="https://static001.geekbang.org/resource/image/b8/2c/b85f24cbc8243426fb270bcb74be682c.jpeg?wh=1920*1080" alt="img" style="zoom:25%;" />
+- 基于DOM的XSS
+  - 前后端分离中，可以直接通过修改网页本身的JavaScript，插入自己的脚本
+  - <img src="https://static001.geekbang.org/resource/image/ac/bf/ac0ce9c0f42db7dd48cb155228b7b1bf.jpeg?wh=1920*1080" alt="img" style="zoom:25%;" />
+- 持久型XSS
+  - 网页搜素关键词，相关所有结果都展示出来，一旦结果中包含黑客提供的JavaScript脚本，只要我们点了对应链接，就相当于执行了JavaScript脚本，这就是持久型XSS攻击
+  - 持久型XSS攻击的内容会存储在服务器上，也叫存储型XSS，这种攻击比前两种XSS危害性更强。传播速度块，范围广
+
+<img src="https://static001.geekbang.org/resource/image/2e/75/2e8c429f46837b3f46a276e462c93175.jpeg?wh=1920*1080" alt="img" style="zoom:25%;" />
+
+
+
+##### 通过XSS攻击，黑客能做什么
+
+- 窃取cookie：通过document.cookie获取，通过window.location请求
+- 未授权操作：伪装成用户发送请求，比如伪装用户发微博，微博中又是病毒链接，一传十，十传百
+- 按键记录和钓鱼：JavaScript可以记录用户的输入信息，可以通过伪造登录框，让用户输入用户密码，进行钓鱼，这时候域名是正常的，但是JavaScript被篡改了
+
+
+
+
+
+##### XSS防护
+
+- 验证输入 OR 验证输出
+  - 验证输入：一切用户输入都不可信，全部验证。但是会存在溯源难，产生未知问题等情况
+  - 验证输出：推荐。对输出信息验证，常见验证点如下
+
+<img src="https://static001.geekbang.org/resource/image/7c/a0/7c1b9b3da33247963c2c1bf38ae184a0.jpeg?wh=1920*1080" alt="img" style="zoom:25%;" />
+
+- 编码：将浏览器关键词（< >等）进行转换，避免浏览器产生误解。
+  - <img src="https://static001.geekbang.org/resource/image/ca/1e/ca06351dcf763b86bb8bef554763bc1e.jpeg?wh=1920*1080" alt="img" style="zoom:25%;" />
+
+- 检测和过滤
+  - 检测：通过黑白名单的方式检测用户请求，比如插入<JavaScript> ，就对JavaScript校验。但是黑客可以变种，所以更推荐用白名单，只允许白名单的通过。
+  - 针对检测到有问题的请求，可以选择过滤或者拒绝，拒绝影响用户体验，过滤可以对敏感数据进行替换，或者上面说的编码
+
+
+
+- CSP：内容安全策略
+  - 在服务端返回的header里添加 Content-Security-Policy ，定义资源的白名单域名
+  - 可以防止黑客应用域外的脚本，或者绕过SOP访问其他域名
+
+<img src="https://static001.geekbang.org/resource/image/48/20/48a923998b80ad2f1c2a274704690e20.jpg?wh=1142*891" alt="img" style="zoom:50%;" />
+
+
+
+### SQL注入
+
+##### 方式
+
+- 修改where语句
+- 执行任意语句
+- 盲注
+
+##### 目的
+
+- 绕过验证
+- 任意篡改数据
+- 窃取数据
+- 消耗资源
+
+##### 防护
+
+- 使用PreparedStatement
+- 使用存储过程
+- 验证输入
+
+<img src="https://static001.geekbang.org/resource/image/1b/36/1b898391a3a04a764d0442d8481c4236.jpg?wh=1142*802" alt="img" style="zoom: 33%;" />
+
+
+
+### CSRF（Cross-Site Request Forgery，跨站请求伪造）
+
+##### 产生方式
+
+- 因为浏览器会保存我们的登录身份信息在cookie里
+
+- 而黑客可以通过钓鱼方式诱导你点击恶意网页，在网页中通过恶意JavaScript脚本获取你保存在浏览器中的身份信息
+
+- 通过你的身份信息伪造请求发送，自动提交表单，比如转账
+
+  <img src="https://static001.geekbang.org/resource/image/7b/0b/7bd75f65e6fc3e9a8fb0246a8a32dc0b.jpeg?wh=1920*1080" alt="img" style="zoom:25%;" />
+
+##### 黑客能作什么
+
+- 模仿用户的所有操作，如修改密码、转账等，绕过身份认证，执行未授权的操作
+
+
+
+##### 防护
+
+- CSRFtoken
+  - 每次请求时候，比如转账，后端先生成一个token给浏览器，转账时候携带这个token，这样黑客就无法构建form表单了
+  - <img src="https://static001.geekbang.org/resource/image/d0/04/d0d3a70f4acf7b0fc7bd1c780a909904.jpeg?wh=1920*1080" alt="img" style="zoom:25%;" />
+
+- 二次验证
+  - 不完全依赖用户的登录信息，需要二次验证，比如微信支付时候还要输入密码
+
+
+
+### SSRF （Server Side Request Forgery，服务端请求伪造）
+
+##### 产生原理
+
+- 服务端有代理功能，用户在浏览器输入一个URL，服务端会像这个URL发起请求，向其他服务器请求资源获取数据
+- 黑客可以输入一个内网URL，让服务端发起一个黑客定义的内网URL请求，实现对内网任意服务的访问
+
+##### 黑客能做什么
+
+- 内网探测
+  - 比如通过访问https://image.baidu.com/search/detail?objurl=127.0.0.1:3306，通过返回的格式可以判断出来3306端口是否监听，如果存在，就说明有mysql服务部署，通过不断尝试IP和端口，可以知道服务器结构
+- 文件读取
+  - 通过file:// 直接读取本地的文件，比如file:///etc/passwd获取所有用户信息，然后不断尝试，将整个服务器文件拉取下来，包括服务器源码、秘钥等敏感信息
+
+##### 防护
+
+- 白名单限制
+  - 最简单、高效的方式，只允许访问
+- 协议限制
+- 请求限制
