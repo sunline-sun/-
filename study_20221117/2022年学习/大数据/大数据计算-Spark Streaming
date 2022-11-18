@@ -1,0 +1,19 @@
+#### 原理
+
+Spark Streaming是利用Spark的分片和快速计算的特性，将实时传输的数据按照时间进行分段，把一段时间传输进来的数据合并在一起，当做一批数据，交给Spark处理，因为Spark处理速度快，如果时间段分的足够小，就会给人一种实时处理的感觉。
+
+
+
+![img](https://static001.geekbang.org/resource/image/fb/c3/fb535e9dc1813dbacfa03c7cb65d17c3.png?wh=1078*206)
+
+
+
+在这个过程中，Spark Streaming 主要做的事就是将流数据转换成小的批数据，剩下的都交给Spark处理。
+
+初始Spark Streaming实例时候，可以指定分段的时间间隔
+
+```
+
+val ssc = new StreamingContext(conf, Seconds(1))
+```
+
